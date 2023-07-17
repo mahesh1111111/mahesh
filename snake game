@@ -1,6 +1,6 @@
-import java.awt.*;
-import java.awt.event.*;
-import java.util.ArrayList;
+import java.util.*;
+import java.lang.*;
+import java.io.*;
 
 public class SnakeGame extends Frame implements KeyListener {
 
