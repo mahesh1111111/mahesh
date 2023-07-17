@@ -1,0 +1,117 @@
+import java.awt.*;
+import java.awt.event.*;
+import java.util.ArrayList;
+
+public class SnakeGame extends Frame implements KeyListener {
+
+    private final int BOARD_WIDTH = 400;
+    private final int BOARD_HEIGHT = 400;
+    private final int SNAKE_SIZE = 10;
+    private final int FOOD_SIZE = 10;
+
+    private ArrayList<Point> snake;
+    private Point food;
+    private Direction direction;
+    private boolean gameOver;
+
+    public SnakeGame() {
+        super("Snake Game");
+        setSize(BOARD_WIDTH, BOARD_HEIGHT);
+        addKeyListener(this);
+        snake = new ArrayList<>();
+        snake.add(new Point(200, 200));
+        snake.add(new Point(190, 200));
+        snake.add(new Point(180, 200));
+        food = new Point(300, 300);
+        direction = Direction.RIGHT;
+        gameOver = false;
+        setVisible(true);
+    }
+
+    @Override
+    public void paint(Graphics g) {
+        g.setColor(Color.BLACK);
+        g.fillRect(0, 0, BOARD_WIDTH, BOARD_HEIGHT);
+
+        for (Point point : snake) {
+            g.setColor(Color.GREEN);
+            g.fillRect(point.x, point.y, SNAKE_SIZE, SNAKE_SIZE);
+        }
+
+        g.setColor(Color.RED);
+        g.fillRect(food.x, food.y, FOOD_SIZE, FOOD_SIZE);
+
+        if (gameOver) {
+            g.setColor(Color.WHITE);
+            g.drawString("Game Over!", 100, 200);
+        }
+    }
+
+    @Override
+    public void keyPressed(KeyEvent e) {
+        switch (e.getKeyCode()) {
+            case KeyEvent.VK_UP:
+                if (direction != Direction.DOWN) {
+                    direction = Direction.UP;
+                }
+                break;
+            case KeyEvent.VK_DOWN:
+                if (direction != Direction.UP) {
+                    direction = Direction.DOWN;
+                }
+                break;
+            case KeyEvent.VK_LEFT:
+                if (direction != Direction.RIGHT) {
+                    direction = Direction.LEFT;
+                }
+                break;
+            case KeyEvent.VK_RIGHT:
+                if (direction != Direction.LEFT) {
+                    direction = Direction.RIGHT;
+                }
+                break;
+        }
+    }
+
+    @Override
+    public void keyReleased(KeyEvent e) {
+    }
+
+    @Override
+    public void keyTyped(KeyEvent e) {
+    }
+
+    private void moveSnake() {
+        Point head = snake.get(0);
+        int newX = head.x;
+        int newY = head.y;
+        switch (direction) {
+            case UP:
+                newY -= SNAKE_SIZE;
+                break;
+            case DOWN:
+                newY += SNAKE_SIZE;
+                break;
+            case LEFT:
+                newX -= SNAKE_SIZE;
+                break;
+            case RIGHT:
+                newX += SNAKE_SIZE;
+                break;
+        }
+
+        if (newX < 0 || newX >= BOARD_WIDTH || newY < 0 || newY >= BOARD_HEIGHT) {
+            gameOver = true;
+        } else if (snake.contains(new Point(newX, newY))) {
+            gameOver = true;
+        } else {
+            snake.add(0, new Point(newX, newY));
+            snake.remove(snake.size() - 1);
+        }
+    }
+
+    private void checkFoodCollision() {
+        if (snake.get(0).equals(food)) {
+            food = new Point((int)(Math.random() * BOARD_WIDTH), (int)(Math.random() * BOARD_HEIGHT));
+        }
+    }
